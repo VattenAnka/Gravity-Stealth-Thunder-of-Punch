@@ -1694,7 +1694,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   state: 0
   randomPath: 0
-  patrolRoute: {fileID: 911698802}
+  patrolRoute: {fileID: 0}
   startWaitTime: 1
   destinations: []
   walkSpeed: 15
