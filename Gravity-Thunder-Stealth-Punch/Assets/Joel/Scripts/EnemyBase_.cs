@@ -6,10 +6,16 @@ public abstract class EnemyBase_ : MonoBehaviour
 {
     [SerializeField] protected StateMachine state = StateMachine.Patrol;
 
+    [Header("Stats")]
+    [SerializeField] protected float walkSpeed;
+    [SerializeField] protected float runSpeed;
+    [SerializeField] protected float rotSpeed;
+
     [Header("Patrol route configuration")]
     [Tooltip("If set to true, the AI will walk between random points. If false it will follow the path in order from 0 and up")]
     [SerializeField] protected bool randomPath;
     [SerializeField] GameObject patrolRoute;
+    [Tooltip("Time it takes before the AI moves to the next Path Point")]
     [SerializeField] protected float startWaitTime;
     [SerializeField] Transform[] destinations;
     protected Transform targetPlayer => GameObject.FindGameObjectWithTag("Player").transform; //GameObject.Find("Player").transform;
@@ -18,10 +24,7 @@ public abstract class EnemyBase_ : MonoBehaviour
     protected Transform path;
     protected int destination;
 
-    [Header("Stats")]
-    [SerializeField] protected float walkSpeed;
-    [SerializeField] protected float runSpeed;
-    [SerializeField] protected float rotSpeed;
+    EnemyUI_ enemyUI;
 
     //Components
     protected Rigidbody rb;
@@ -34,7 +37,8 @@ public abstract class EnemyBase_ : MonoBehaviour
     protected virtual void Awake()
     {
         rb = GetComponent<Rigidbody>();
-
+        enemyUI = GetComponentInChildren<EnemyUI_>();
+        
         SetPatrolRoute();
     }
 
@@ -46,7 +50,11 @@ public abstract class EnemyBase_ : MonoBehaviour
 
     protected virtual void Update()
     {
-        
+        if(enemyUI.searchMeterValue < enemyUI.maxSearchMeterValue)
+            enemyUI.searchMeterValue = enemyUI.searchMeterValue + 25 * Time.deltaTime;
+
+        else if (enemyUI.searchMeterValue >= enemyUI.maxSearchMeterValue && enemyUI.chaseMeterValue < enemyUI.maxChaseMeterValue)
+            enemyUI.chaseMeterValue = enemyUI.chaseMeterValue + 25 * Time.deltaTime;
     }
 
     protected virtual void FixedUpdate()
@@ -56,7 +64,9 @@ public abstract class EnemyBase_ : MonoBehaviour
             case StateMachine.Patrol:
                 //Debug.Log("I am patrolling");
                 Rotate(path);
-                Patrolling(); 
+                Patrolling();
+                break;
+            case StateMachine.Detect:
                 break;
         }
     }
@@ -125,7 +135,12 @@ public abstract class EnemyBase_ : MonoBehaviour
             else
             {
                 MoveTowardsTarget(path, walkSpeed);
+                
             }
         }
     }
+
+    //DETECTION_DETECTION_DETECTION_DETECTION_DETECTION_DETECTION_DETECTION_DETECTION_DETECTION_DETECTION_DETECTION_DETECTION_DETECTION_DETECTION_DETECTION
+
+    
 }

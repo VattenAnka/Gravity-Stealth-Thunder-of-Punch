@@ -14,6 +14,11 @@ public class EnemyGuard_ : EnemyBase_
         base.Start();
     }
 
+    override protected void Update()
+    {
+        base.Update();
+    }
+
     override protected void FixedUpdate()
     {
         base.FixedUpdate();
