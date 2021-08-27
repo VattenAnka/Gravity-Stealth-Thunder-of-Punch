@@ -25,6 +25,8 @@ public class PlayerMovement_ : MonoBehaviour
     [SerializeField] Transform projectileSpawnPoint;
     float destroyTime, speed, startDistance;
     [SerializeField] public float distance;
+    [SerializeField] private float jumpForce;
+    bool isMoving;
     // Start is called before the first frame update
     void Start()
     {
@@ -49,16 +51,21 @@ public class PlayerMovement_ : MonoBehaviour
         {
             case MovementState.Standard:
                 PlayerStandardMovement();
+                if (isMoving&& !isGrounded)
+                {
+                    rb.mass = 10;
+                }
+                else rb.mass = 1;
                 break;
 
-            case MovementState.Aim:
+           /* case MovementState.Aim:
                 PlayerAimMovement();
                 if (aimPosRight)
                 {
                     aimTarget.localPosition = aimTargetStartPos;
                 }
                 else aimTarget.localPosition = new Vector3(-aimTargetStartPos.x, aimTargetStartPos.y, aimTargetStartPos.z);
-                break;
+                break;*/
         }
     }
     // Update is called once per frame
@@ -66,8 +73,9 @@ public class PlayerMovement_ : MonoBehaviour
     {
         aimCam.SetActive(movementState == MovementState.Aim);
         standardCam.SetActive(movementState == MovementState.Standard);
-        Shoot();
-        ChangeMode();
+        //Shoot();
+       Jump();
+      //  ChangeMode();
         //PlayerInput();
     }
 
@@ -104,13 +112,21 @@ public class PlayerMovement_ : MonoBehaviour
             aimPosRight = !aimPosRight;
         }
     }
+    private void Jump()
+    {
+        if(Input.GetButton("Jump") && isGrounded)
+        {
 
+            rb.AddForce(Vector3.up * jumpForce,ForceMode.Impulse);
+            print("jump");
+        }
+    }
     public void PlayerStandardMovement()
     {
 
         float horizontal = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
-
+        isMoving = vertical != 0 || horizontal != 0;
 
         Vector3 direction = new Vector3(horizontal, 0f, vertical).normalized;
 
@@ -126,8 +142,9 @@ public class PlayerMovement_ : MonoBehaviour
             Vector3 moveDir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
 
             // Vector3 move = new Vector3(moveDir.x, rb.velocity.y, moveDir.z);
-            rb.velocity = moveDir.normalized * movementSpeed * Time.deltaTime;
-            //rb.AddForce(moveDir.normalized * movementSpeed * Time.deltaTime,ForceMode.Force);
+          //  rb.velocity += moveDir.normalized * movementSpeed * Time.deltaTime;
+            rb.AddForce(moveDir.normalized * movementSpeed * Time.deltaTime,ForceMode.Force);
+            rb.velocity = Vector3.ClampMagnitude(rb.velocity, 10f);
 
 
         }
