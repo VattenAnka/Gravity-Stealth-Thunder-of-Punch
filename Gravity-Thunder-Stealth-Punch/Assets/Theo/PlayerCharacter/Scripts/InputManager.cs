@@ -5,17 +5,22 @@ using UnityEngine;
 
 public class InputManager : MonoBehaviour
 {
+    PlayerLocomotion playerLocomotion;
     AnimatorManager animatorManager;
-    [HideInInspector] public float horizontalInput, verticalInput;
+    [HideInInspector] public float horizontalInput, verticalInput, moveAmount;
      public float cameraInputX, cameraInputY;
     public Vector3 mousePos;
-    float moveAmount;
+  
     private void Awake()
     {
         animatorManager = GetComponent<AnimatorManager>();
+        playerLocomotion = GetComponent<PlayerLocomotion>();
     }
     public void HandleAllInputs()
     {
+        //hide cursor when clicking on screen
+        if (Input.GetMouseButtonDown(0)) Cursor.visible = false;
+        
         HandleMovementInput();
         //Handlejumpinput
         //Handle Camera
@@ -31,6 +36,13 @@ public class InputManager : MonoBehaviour
 
         moveAmount = Mathf.Clamp01(Mathf.Abs(horizontalInput) + Mathf.Abs(verticalInput));
         animatorManager.UpdateAnimatorValues(0, moveAmount);
+
+
+        //toggle running, walking and sprinting
+        if (Input.GetKeyDown(KeyCode.LeftControl)) playerLocomotion.isRunning = !playerLocomotion.isRunning;
+
+        if (playerLocomotion.isRunning) moveAmount = 1f;
+        else moveAmount = 0.1f;
     }
 
     

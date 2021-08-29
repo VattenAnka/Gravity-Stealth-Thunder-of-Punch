@@ -5205,6 +5205,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 914102703528364848, guid: 411da84fa53f48e4b85eda9c227c727c, type: 3}
+      propertyPath: runningSpeed
+      value: 14
+      objectReference: {fileID: 0}
+    - target: {fileID: 914102703528364848, guid: 411da84fa53f48e4b85eda9c227c727c, type: 3}
+      propertyPath: walkingSpeed
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 914102703528364848, guid: 411da84fa53f48e4b85eda9c227c727c, type: 3}
+      propertyPath: sprintingSpeed
+      value: 20
+      objectReference: {fileID: 0}
     - target: {fileID: 2316811186807362029, guid: 411da84fa53f48e4b85eda9c227c727c, type: 3}
       propertyPath: m_Name
       value: 'LowPolyMan '

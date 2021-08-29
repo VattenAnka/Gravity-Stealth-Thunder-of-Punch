@@ -6,7 +6,9 @@ public class PlayerLocomotion : MonoBehaviour
 {
     Vector3 moveDirection;
     Transform cameraObject;
-    [SerializeField] float moveSpeed, rotationSpeed;
+    [HideInInspector] public bool isRunning, isSprinting;
+  
+    [SerializeField] float  rotationSpeed, walkingSpeed, runningSpeed, sprintingSpeed;
     Rigidbody rb;
     InputManager inputManager;
     private void Awake()
@@ -30,7 +32,17 @@ public class PlayerLocomotion : MonoBehaviour
         moveDirection += cameraObject.right * inputManager.horizontalInput;
         moveDirection.Normalize();
         moveDirection.y = 0;
-        moveDirection *= moveSpeed;
+
+        //If sprinting we select sprinting speed
+        //If we are walking we select walking speed
+        //If we are running we will select running speed
+        //If we are sneaking we will select sneaking speed
+        
+
+        if (inputManager.moveAmount >= 0.5f ) moveDirection *= runningSpeed;
+        else moveDirection *= walkingSpeed;
+
+        
 
         Vector3 movementVelocity = moveDirection;
         rb.velocity = movementVelocity;
