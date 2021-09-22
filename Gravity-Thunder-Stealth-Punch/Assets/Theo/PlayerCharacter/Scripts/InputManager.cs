@@ -8,6 +8,8 @@ public class InputManager : MonoBehaviour
     PlayerLocomotion playerLocomotion;
     AnimatorManager animatorManager;
     [HideInInspector] public float horizontalInput, verticalInput ;
+    [HideInInspector] public bool jumpInput;
+    
     public float moveAmount;
      public float cameraInputX, cameraInputY;
     public Vector3 mousePos;
@@ -23,8 +25,18 @@ public class InputManager : MonoBehaviour
         if (Input.GetMouseButtonDown(0)) Cursor.visible = false;
         
         HandleMovementInput();
-        //Handlejumpinput
+        HandleJumpInput();
         //Handle Camera
+    }
+
+    private void HandleJumpInput()
+    {
+        jumpInput = Input.GetButtonDown("Jump");
+        if (jumpInput)
+        {
+            jumpInput = false;
+            playerLocomotion.HandleJumping();
+        }
     }
     private void HandleMovementInput()
     {

@@ -10,7 +10,7 @@ public class PlayerLocomotion : MonoBehaviour
     public float inAirTimer, rayCastHeightOffset = 0.5f, rayCastRadius = 1f;
 
     [HideInInspector] public bool isRunning, isSprinting;
-    bool isGrounded;
+    public bool isGrounded, isJumping;
     [SerializeField] float rotationSpeed, walkingSpeed, runningSpeed, sprintingSpeed, leapingVelocity, fallingVelocity;
     public LayerMask groundLayer;
     Rigidbody rb;
@@ -19,6 +19,9 @@ public class PlayerLocomotion : MonoBehaviour
     AnimatorManager animatorManager;
     public Vector3 rayCastOrigin;
     public Transform raySphere;
+
+    public float gravityIntensity = -15, jumpHeight = 3;
+
     private void Awake()
     {
         animatorManager = GetComponent<AnimatorManager>();
@@ -31,6 +34,8 @@ public class PlayerLocomotion : MonoBehaviour
 
     private void HandleMovement()
     {
+        if (isJumping)
+            return;
         moveDirection = cameraObject.forward * inputManager.verticalInput;
         moveDirection += cameraObject.right * inputManager.horizontalInput;
         moveDirection.Normalize();
@@ -53,6 +58,8 @@ public class PlayerLocomotion : MonoBehaviour
 
     private void HandleRotation()
     {
+        if (isJumping)
+            return;
         Vector3 targetDirection = Vector3.zero;
         targetDirection = cameraObject.forward * Input.GetAxis("Vertical");
         targetDirection += cameraObject.right * Input.GetAxis("Horizontal");
@@ -74,7 +81,7 @@ public class PlayerLocomotion : MonoBehaviour
         RaycastHit hitInfo;
 
 
-        if (!isGrounded)
+        if (!isGrounded&& !isJumping)
         {
               if (!playerManager.isInteracting)
               {
@@ -100,6 +107,19 @@ public class PlayerLocomotion : MonoBehaviour
         else
         {
             isGrounded = false;
+        }
+    }
+    public void HandleJumping()
+    {
+        if (isGrounded)
+        {
+            animatorManager.animator.SetBool("isJumping", true);
+            animatorManager.PlayTargetAnimation("Jump", false);
+            float jumpingVelocity = Mathf.Sqrt(-2 * gravityIntensity * jumpHeight);
+            Vector3 playerVelocity = moveDirection;
+            playerVelocity.y = jumpingVelocity;
+           // rb.velocity = playerVelocity;
+            rb.AddForce(playerVelocity);
         }
     }
     public void HandleAllMovement()

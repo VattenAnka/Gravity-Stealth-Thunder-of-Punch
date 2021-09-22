@@ -4671,7 +4671,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1815767319}
   m_LocalRotation: {x: 0.22895426, y: -0, z: -0, w: 0.97343725}
-  m_LocalPosition: {x: -27.35, y: -2.25, z: -22.82}
+  m_LocalPosition: {x: -27.35, y: -2.16, z: -22.68}
   m_LocalScale: {x: 14.658428, y: 7.859984, z: 14.393197}
   m_Children: []
   m_Father: {fileID: 0}
@@ -5683,6 +5683,29 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1126213409, guid: 411da84fa53f48e4b85eda9c227c727c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.019
+      objectReference: {fileID: 0}
+    - target: {fileID: 914102703528364848, guid: 411da84fa53f48e4b85eda9c227c727c, type: 3}
+      propertyPath: jumpHeight
+      value: 575
+      objectReference: {fileID: 0}
+    - target: {fileID: 914102703528364848, guid: 411da84fa53f48e4b85eda9c227c727c, type: 3}
+      propertyPath: rayCastRadius
+      value: 0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 914102703528364848, guid: 411da84fa53f48e4b85eda9c227c727c, type: 3}
+      propertyPath: gravityIntensity
+      value: -600
+      objectReference: {fileID: 0}
+    - target: {fileID: 1334579089537257662, guid: 411da84fa53f48e4b85eda9c227c727c, type: 3}
+      propertyPath: m_WarningMessage
+      value: "\nBinding warning: Some generic clip(s) animate transforms that are
+        already bound by a Humanoid avatar. These transforms can only be changed
+        by Humanoid clips.\n\tTransform 'QuickRigCharacter_LeftUpLeg'\n\tFrom animation
+        clip 'Fall'\n\tFrom animation clip 'Fall'"
+      objectReference: {fileID: 0}
     - target: {fileID: 2316811186807362029, guid: 411da84fa53f48e4b85eda9c227c727c, type: 3}
       propertyPath: m_Name
       value: 'LowPolyMan '
