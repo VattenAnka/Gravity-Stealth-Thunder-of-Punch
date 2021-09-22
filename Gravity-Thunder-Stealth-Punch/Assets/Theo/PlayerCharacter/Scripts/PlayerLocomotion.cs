@@ -6,28 +6,31 @@ public class PlayerLocomotion : MonoBehaviour
 {
     Vector3 moveDirection;
     Transform cameraObject;
+
+    public float inAirTimer, rayCastHeightOffset = 0.5f, rayCastRadius = 1f;
+
     [HideInInspector] public bool isRunning, isSprinting;
-  
-    [SerializeField] float  rotationSpeed, walkingSpeed, runningSpeed, sprintingSpeed;
+    bool isGrounded;
+    [SerializeField] float rotationSpeed, walkingSpeed, runningSpeed, sprintingSpeed, leapingVelocity, fallingVelocity;
+    public LayerMask groundLayer;
     Rigidbody rb;
     InputManager inputManager;
+    PlayerManager playerManager;
+    AnimatorManager animatorManager;
+    public Vector3 rayCastOrigin;
+    public Transform raySphere;
     private void Awake()
     {
+        animatorManager = GetComponent<AnimatorManager>();
+        playerManager = GetComponent<PlayerManager>();
         inputManager = GetComponent<InputManager>();
         rb = GetComponent<Rigidbody>();
         cameraObject = Camera.main.transform;
     }
-        
-    void Start()
-    {
-    }
 
-    // Update is called once per frame
-    void Update()
+
+    private void HandleMovement()
     {
-        
-    }
-    private void HandleMovement(){
         moveDirection = cameraObject.forward * inputManager.verticalInput;
         moveDirection += cameraObject.right * inputManager.horizontalInput;
         moveDirection.Normalize();
@@ -37,12 +40,12 @@ public class PlayerLocomotion : MonoBehaviour
         //If we are walking we select walking speed
         //If we are running we will select running speed
         //If we are sneaking we will select sneaking speed
-        
 
-        if (inputManager.moveAmount >= 0.5f ) moveDirection *= runningSpeed;
+        //Switch between movement speeds
+        if (inputManager.moveAmount >= 0.5f && inputManager.moveAmount < 0.8f) moveDirection *= runningSpeed;
+        else if (inputManager.moveAmount >= 0.8f) moveDirection *= sprintingSpeed;
         else moveDirection *= walkingSpeed;
 
-        
 
         Vector3 movementVelocity = moveDirection;
         rb.velocity = movementVelocity;
@@ -52,11 +55,11 @@ public class PlayerLocomotion : MonoBehaviour
     {
         Vector3 targetDirection = Vector3.zero;
         targetDirection = cameraObject.forward * Input.GetAxis("Vertical");
-        targetDirection += cameraObject.right* Input.GetAxis("Horizontal");
+        targetDirection += cameraObject.right * Input.GetAxis("Horizontal");
         targetDirection.Normalize();
         targetDirection.y = 0;
 
-        if(targetDirection == Vector3.zero)
+        if (targetDirection == Vector3.zero)
         {
             targetDirection = transform.forward;
         }
@@ -66,10 +69,53 @@ public class PlayerLocomotion : MonoBehaviour
 
         transform.rotation = playerRotation;
     }
+    private void HandleFallingAndLanding()
+    {
+        RaycastHit hitInfo;
 
+
+        if (!isGrounded)
+        {
+              if (!playerManager.isInteracting)
+              {
+                  animatorManager.PlayTargetAnimation("Falling", true);
+              }
+            inAirTimer += Time.deltaTime;
+            rb.AddForce(transform.forward * leapingVelocity);
+            rb.AddForce(Vector3.down * fallingVelocity * inAirTimer);
+        }
+
+
+        if (Physics.CheckSphere(raySphere.position, rayCastRadius, groundLayer))
+        {
+            if (!isGrounded && !playerManager.isInteracting)
+            {
+                animatorManager.PlayTargetAnimation("Land", true);
+
+            }
+            inAirTimer = 0;
+            
+            isGrounded = true;
+        }
+        else
+        {
+            isGrounded = false;
+        }
+    }
     public void HandleAllMovement()
     {
+        HandleFallingAndLanding();
+        if (!isGrounded)
+            return;
         HandleMovement();
         HandleRotation();
     }
+
+    private void OnDrawGizmos()
+    {
+
+        Gizmos.DrawSphere(raySphere.position, rayCastRadius);
+    }
 }
+
+
