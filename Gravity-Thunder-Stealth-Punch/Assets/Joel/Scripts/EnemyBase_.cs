@@ -18,6 +18,22 @@ public abstract class EnemyBase_ : MonoBehaviour
     [Tooltip("Time it takes before the AI moves to the next Path Point")]
     [SerializeField] protected float startWaitTime;
     [SerializeField] Transform[] destinations;
+
+    [SerializeField] protected bool searchForTargets = true;
+
+    [Header("Targets to detect")]
+    public LayerMask targetMask;
+
+    [Header("Obstacles that block sight")]
+    public LayerMask obstacleMask;
+
+    [Header("Field of View")]
+    public float viewRadius;
+    [Range(0,360)]
+    public float viewAngle;
+
+    public List<Transform> visibleTargets = new List<Transform>();
+
     protected Transform targetPlayer => GameObject.FindGameObjectWithTag("Player").transform; //GameObject.Find("Player").transform;
     //[SerializeField] protected float giveUpTimerStart = 5f;
     protected float waitTime;
@@ -50,11 +66,12 @@ public abstract class EnemyBase_ : MonoBehaviour
 
     protected virtual void Update()
     {
-        if(enemyUI.searchMeterValue < enemyUI.maxSearchMeterValue)
+        //UI DEBUG
+        /*if(enemyUI.searchMeterValue < enemyUI.maxSearchMeterValue)
             enemyUI.searchMeterValue = enemyUI.searchMeterValue + 25 * Time.deltaTime;
 
         else if (enemyUI.searchMeterValue >= enemyUI.maxSearchMeterValue && enemyUI.chaseMeterValue < enemyUI.maxChaseMeterValue)
-            enemyUI.chaseMeterValue = enemyUI.chaseMeterValue + 25 * Time.deltaTime;
+            enemyUI.chaseMeterValue = enemyUI.chaseMeterValue + 25 * Time.deltaTime;*/
     }
 
     protected virtual void FixedUpdate()
@@ -65,11 +82,15 @@ public abstract class EnemyBase_ : MonoBehaviour
                 //Debug.Log("I am patrolling");
                 Rotate(path);
                 Patrolling();
+                if (searchForTargets == true)
+                    FindVisibleTargets();
                 break;
             case StateMachine.Detect:
                 break;
         }
     }
+
+    //PATROL//PATROL//PATROL//PATROL//PATROL//PATROL//PATROL//PATROL//PATROL//PATROL//PATROL//PATROL//PATROL//PATROL//PATROL//PATROL//PATROL//PATROL//PATROL
 
     protected void SetPatrolRoute()
     {
@@ -135,12 +156,61 @@ public abstract class EnemyBase_ : MonoBehaviour
             else
             {
                 MoveTowardsTarget(path, walkSpeed);
-                
             }
         }
     }
 
-    //DETECTION_DETECTION_DETECTION_DETECTION_DETECTION_DETECTION_DETECTION_DETECTION_DETECTION_DETECTION_DETECTION_DETECTION_DETECTION_DETECTION_DETECTION
+    //PATROL//PATROL//PATROL//PATROL//PATROL//PATROL//PATROL//PATROL//PATROL//PATROL//PATROL//PATROL//PATROL//PATROL//PATROL//PATROL//PATROL//PATROL//PATROL
 
-    
+    //DETECTION//DETECTION//DETECTION//DETECTION//DETECTION//DETECTION//DETECTION//DETECTION//DETECTION//DETECTION//DETECTION//DETECTION//DETECTION//DETECTION
+
+    //FOV//FOV//FOV//FOV//FOV//FOV//FOV//FOV//FOV//FOV//FOV//FOV//FOV//FOV//FOV//FOV//FOV//FOV//FOV//FOV//FOV//FOV//FOV//FOV//FOV//FOV//FOV//FOV//FOV//FOV
+
+    protected virtual void FindVisibleTargets()
+    {
+        //Clears list of found targets each time this function is called, to avoid duplicates
+        visibleTargets.Clear();
+
+        //Looking for all targets within the view radius
+        Collider[] targetsInViewRadius = Physics.OverlapSphere(transform.position, viewRadius, targetMask);
+
+        //Determine if the targets are actually in side of the view angle
+        for (int i = 0; i < targetsInViewRadius.Length; i++)
+        {
+            Transform target = targetsInViewRadius[i].transform;
+            Vector3 directionToTarget = (target.position - transform.position).normalized;
+
+            //For each target within the view angle that isn't blocked by an obstacle, add those targets to the visible targets list
+            if (Vector3.Angle(transform.forward, directionToTarget) < viewAngle / 2)
+            {
+                float distanceToTarget = Vector3.Distance(transform.position, target.position);
+
+                if (!Physics.Raycast(transform.position, directionToTarget, distanceToTarget, obstacleMask))
+                {
+                    visibleTargets.Add(target);
+                    Rotate(target);
+                    Sus();
+                }
+            }
+        }
+    }
+
+    protected virtual void Sus() 
+    {
+        if (enemyUI.searchMeterValue < enemyUI.maxSearchMeterValue)
+            enemyUI.searchMeterValue = enemyUI.searchMeterValue + 25 * Time.deltaTime;
+    }
+
+    public virtual Vector3 DirectionFromAngle (float angleInDegrees, bool angleIsGlobal)
+    {
+        //makes sure the angle follows the AI's rotation by setting the angle rotation to the AI's y rotation
+        if (!angleIsGlobal)
+        {
+            angleInDegrees += transform.eulerAngles.y;
+        }
+        //converts the angle from degrees into radian units. Uses sin and cos to get the correct angle
+        return new Vector3(Mathf.Sin(angleInDegrees * Mathf.Deg2Rad), 0, Mathf.Cos(angleInDegrees * Mathf.Deg2Rad));
+    }
+
+    //FOV//FOV//FOV//FOV//FOV//FOV//FOV//FOV//FOV//FOV//FOV//FOV//FOV//FOV//FOV//FOV//FOV//FOV//FOV//FOV//FOV//FOV//FOV//FOV//FOV//FOV//FOV//FOV//FOV//FOV
 }
