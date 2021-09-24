@@ -25,6 +25,7 @@ public class PlayerManager : MonoBehaviour
     void Update()
     {
         inputManager.HandleAllInputs();
+        playerLocomotion.HandleJumping();
     }
 
     private void FixedUpdate()

@@ -9,7 +9,7 @@ public class InputManager : MonoBehaviour
     AnimatorManager animatorManager;
     PlayerAbilities playerAbilities;
     [HideInInspector] public float horizontalInput, verticalInput;
-    [HideInInspector] public bool jumpInput;
+    [HideInInspector] public bool jumpDown, jumpUp;
 
     public float moveAmount;
     public float cameraInputX, cameraInputY;
@@ -38,12 +38,10 @@ public class InputManager : MonoBehaviour
 
     private void HandleJumpInput()
     {
-        jumpInput = Input.GetButtonDown("Jump");
-        if (jumpInput)
-        {
-            jumpInput = false;
-            playerLocomotion.HandleJumping();
-        }
+        jumpDown = Input.GetButton("Jump");
+        jumpUp = Input.GetButtonUp("Jump");
+        
+            
     }
     private void HandleMovementInput()
     {

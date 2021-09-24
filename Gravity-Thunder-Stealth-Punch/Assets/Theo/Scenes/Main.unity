@@ -7942,6 +7942,30 @@ PrefabInstance:
       propertyPath: forcePushPower
       value: 50
       objectReference: {fileID: 0}
+    - target: {fileID: 914102703528364848, guid: 411da84fa53f48e4b85eda9c227c727c, type: 3}
+      propertyPath: inAirSpeed
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 914102703528364848, guid: 411da84fa53f48e4b85eda9c227c727c, type: 3}
+      propertyPath: inAirControl
+      value: 0.461
+      objectReference: {fileID: 0}
+    - target: {fileID: 914102703528364848, guid: 411da84fa53f48e4b85eda9c227c727c, type: 3}
+      propertyPath: maxJumpHeight
+      value: 2000
+      objectReference: {fileID: 0}
+    - target: {fileID: 914102703528364848, guid: 411da84fa53f48e4b85eda9c227c727c, type: 3}
+      propertyPath: minJumpHeight
+      value: 400
+      objectReference: {fileID: 0}
+    - target: {fileID: 914102703528364848, guid: 411da84fa53f48e4b85eda9c227c727c, type: 3}
+      propertyPath: jumpChargeRate
+      value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 914102703528364848, guid: 411da84fa53f48e4b85eda9c227c727c, type: 3}
+      propertyPath: maximumVelocity
+      value: 60
+      objectReference: {fileID: 0}
     - target: {fileID: 2316811186807362029, guid: 411da84fa53f48e4b85eda9c227c727c, type: 3}
       propertyPath: m_Name
       value: 'LowPolyMan '
