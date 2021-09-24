@@ -347,6 +347,11 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 26336737}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!4 &58301978 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3129201104424635223, guid: 411da84fa53f48e4b85eda9c227c727c, type: 3}
+  m_PrefabInstance: {fileID: 4255475738478879836}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &133711858
 GameObject:
   m_ObjectHideFlags: 0
@@ -551,7 +556,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 431940038}
   serializedVersion: 2
-  m_Mass: 1
+  m_Mass: 5
   m_Drag: 0
   m_AngularDrag: 0.05
   m_UseGravity: 1
@@ -1368,6 +1373,36 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 581322456}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &591969879
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 591969880}
+  m_Layer: 0
+  m_Name: GrabPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &591969880
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 591969879}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.236, z: 0.97}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 58301978}
+  m_RootOrder: 15
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &604337538
 GameObject:
   m_ObjectHideFlags: 0
@@ -1567,7 +1602,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 688773782}
   serializedVersion: 2
-  m_Mass: 1
+  m_Mass: 5
   m_Drag: 0
   m_AngularDrag: 0.05
   m_UseGravity: 1
@@ -3393,7 +3428,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1094636312}
   serializedVersion: 2
-  m_Mass: 1
+  m_Mass: 5
   m_Drag: 0
   m_AngularDrag: 0.05
   m_UseGravity: 1
@@ -6084,7 +6119,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1766740069}
   serializedVersion: 2
-  m_Mass: 1
+  m_Mass: 5
   m_Drag: 0
   m_AngularDrag: 0.05
   m_UseGravity: 1
@@ -6660,7 +6695,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1858580232}
   serializedVersion: 2
-  m_Mass: 1
+  m_Mass: 5
   m_Drag: 0
   m_AngularDrag: 0.05
   m_UseGravity: 1
@@ -6979,7 +7014,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1940090641}
   serializedVersion: 2
-  m_Mass: 1
+  m_Mass: 5
   m_Drag: 0
   m_AngularDrag: 0.05
   m_UseGravity: 1
@@ -7939,6 +7974,10 @@ PrefabInstance:
       value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 1878728073, guid: 411da84fa53f48e4b85eda9c227c727c, type: 3}
+      propertyPath: grabPoint
+      value: 
+      objectReference: {fileID: 591969880}
+    - target: {fileID: 1878728073, guid: 411da84fa53f48e4b85eda9c227c727c, type: 3}
       propertyPath: forcePushPower
       value: 50
       objectReference: {fileID: 0}
@@ -7956,11 +7995,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 914102703528364848, guid: 411da84fa53f48e4b85eda9c227c727c, type: 3}
       propertyPath: minJumpHeight
-      value: 400
+      value: 600
       objectReference: {fileID: 0}
     - target: {fileID: 914102703528364848, guid: 411da84fa53f48e4b85eda9c227c727c, type: 3}
       propertyPath: jumpChargeRate
-      value: 1000
+      value: 1000.24
+      objectReference: {fileID: 0}
+    - target: {fileID: 914102703528364848, guid: 411da84fa53f48e4b85eda9c227c727c, type: 3}
+      propertyPath: fallingVelocity
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 914102703528364848, guid: 411da84fa53f48e4b85eda9c227c727c, type: 3}
       propertyPath: maximumVelocity

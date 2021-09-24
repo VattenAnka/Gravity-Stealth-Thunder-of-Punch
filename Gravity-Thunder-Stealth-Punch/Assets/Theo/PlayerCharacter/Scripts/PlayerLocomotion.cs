@@ -7,21 +7,27 @@ public class PlayerLocomotion : MonoBehaviour
     Vector3 moveDirection;
     Transform cameraObject;
 
-    public float inAirTimer, rayCastHeightOffset = 0.5f, rayCastRadius = 1f;
 
-    [HideInInspector] public bool isRunning, isSprinting;
-    public bool isGrounded, isJumping;
-    [SerializeField] float rotationSpeed, walkingSpeed, runningSpeed, sprintingSpeed,leapingVelocity, fallingVelocity, maximumVelocity;
-    [Range(0,1)][SerializeField] float inAirControl;
-    public LayerMask groundLayer;
+    [HideInInspector] public bool isRunning, isSprinting, isGrounded, isJumping;
+   
+    [Header("Ground Movement Settings")]
+    [SerializeField] float rotationSpeed;
+    [SerializeField] float walkingSpeed;
+    [SerializeField] float runningSpeed;
+    [SerializeField] float sprintingSpeed;
+    [Header("Jump and Fall Settings")]
+    [Range(0, 1)] [SerializeField] float inAirControl;
+    [SerializeField] float jumpHeight = 3, jumpChargeRate = 10, minJumpHeight, maxJumpHeight, fallingVelocity, maximumVelocity, rayCastRadius = 1f;
+    float inAirTimer;
+    [SerializeField] LayerMask groundLayer;
+    [SerializeField] Transform raySphere;
+    
+
     Rigidbody rb;
     InputManager inputManager;
     PlayerManager playerManager;
     AnimatorManager animatorManager;
-    public Vector3 rayCastOrigin;
-    public Transform raySphere;
-
-    public float jumpHeight = 3, jumpChargeRate = 10, minJumpHeight,maxJumpHeight;
+    
 
     private void Awake()
     {
@@ -65,7 +71,7 @@ public class PlayerLocomotion : MonoBehaviour
         moveDirection.Normalize();
         moveDirection *= inAirControl;
         moveDirection.y = 0;
-        rb.AddForce(moveDirection,ForceMode.VelocityChange);
+        rb.AddForce(moveDirection, ForceMode.VelocityChange);
 
     }
 
@@ -91,9 +97,7 @@ public class PlayerLocomotion : MonoBehaviour
     }
     private void HandleFallingAndLanding()
     {
-        RaycastHit hitInfo;
-
-
+        //Gives extra gravity to player if isnt on ground
         if (!isGrounded)
         {
             if (!playerManager.isInteracting)
@@ -101,17 +105,16 @@ public class PlayerLocomotion : MonoBehaviour
                 animatorManager.PlayTargetAnimation("Falling", true);
             }
             inAirTimer += Time.deltaTime;
-            //  rb.AddForce(transform.forward * leapingVelocity);
-            if (rb.velocity.magnitude >= maximumVelocity)
-            {
-                rb.AddForce(-(rb.velocity) * 1, ForceMode.Force);
-                Debug.Log("TO FAST :(");
-            }
-            else
-            {
-                rb.AddForce(Vector3.down * fallingVelocity * inAirTimer);
-            }
+            // clamps velocity by pushing player in opposite direction if velocity is above maximum velocity
+            /* if (rb.velocity.magnitude >= maximumVelocity)
+             {
+                 rb.AddForce(-(rb.velocity) * 1, ForceMode.Force);
+             }*/
+            //adds extra gravity pull to player
+            rb.AddForce(Vector3.down * fallingVelocity * inAirTimer);
         }
+
+        //Ground check 
         if (Physics.CheckSphere(raySphere.position, rayCastRadius, groundLayer))
         {
             if (!isGrounded && !playerManager.isInteracting)
@@ -131,11 +134,16 @@ public class PlayerLocomotion : MonoBehaviour
 
 
 
+
+
+
+
+
     public void HandleJumping()
     {
         if (isGrounded)
         {
-            if (inputManager.jumpDown &&jumpHeight<=maxJumpHeight )
+            if (inputManager.jumpDown && jumpHeight <= maxJumpHeight)
             {
                 jumpHeight += Time.deltaTime * jumpChargeRate;
                 Debug.Log(jumpHeight);
@@ -144,24 +152,24 @@ public class PlayerLocomotion : MonoBehaviour
             {
                 animatorManager.animator.SetBool("IsJumping", true);
                 animatorManager.PlayTargetAnimation("Jump", false);
-                rb.AddForce(transform.up*jumpHeight);
+                rb.AddForce(transform.up * jumpHeight);
                 jumpHeight = minJumpHeight;
             }
         }
     }
-           
 
 
 
-               
-               
+
+
+
     public void HandleAllMovement()
     {
         HandleFallingAndLanding();
         HandleRotation();
         if (isGrounded)
         {
-         
+
             HandleMovement();
         }
         else InAirMovement();

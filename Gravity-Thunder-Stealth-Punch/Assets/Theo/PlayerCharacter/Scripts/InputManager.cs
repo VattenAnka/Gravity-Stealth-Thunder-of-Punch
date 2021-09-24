@@ -30,6 +30,7 @@ public class InputManager : MonoBehaviour
             playerAbilities.ForcePush();
             Cursor.visible = false;
         }
+       
 
         HandleMovementInput();
         HandleJumpInput();

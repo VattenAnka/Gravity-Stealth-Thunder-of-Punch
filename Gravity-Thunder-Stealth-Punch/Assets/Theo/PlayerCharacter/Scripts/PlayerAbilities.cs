@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PlayerAbilities : MonoBehaviour
 {
+    public Transform grabPoint;
     Camera camera;
     RaycastHit hit;
     public float maxForce;
@@ -21,6 +22,7 @@ public class PlayerAbilities : MonoBehaviour
 
     }
 
+   
     public void ForcePush()
     {
 
@@ -35,17 +37,12 @@ public class PlayerAbilities : MonoBehaviour
                 if (maxForce - Vector3.Distance(hit.point, camera.transform.position)>0) force = maxForce- Vector3.Distance(hit.point, camera.transform.position);
                 hit.collider.gameObject.GetComponent<Rigidbody>().AddForce((hit.point - camera.transform.position) * force, ForceMode.Impulse);
             }
-            else
-            {
-                force = 0;
-                if (maxForce - Vector3.Distance(hit.point, camera.transform.position) > 0) force = maxForce - Vector3.Distance(hit.point, camera.transform.position);
-                GetComponent<Rigidbody>().AddForce(-(hit.point - camera.transform.position) * force/4, ForceMode.Impulse);
-            }
-
-                
-
 
         }
     }
 }
+
+                
+
+
 
