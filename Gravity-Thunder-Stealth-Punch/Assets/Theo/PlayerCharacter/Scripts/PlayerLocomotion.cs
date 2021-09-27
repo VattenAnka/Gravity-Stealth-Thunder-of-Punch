@@ -1,9 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.UI;
 public class PlayerLocomotion : MonoBehaviour
 {
+    public Text magnitudeUI;
+    
     Vector3 moveDirection;
     Transform cameraObject;
 
@@ -106,9 +108,9 @@ public class PlayerLocomotion : MonoBehaviour
             }
             inAirTimer += Time.deltaTime;
             // clamps velocity by pushing player in opposite direction if velocity is above maximum velocity
-            /* if (rb.velocity.magnitude >= maximumVelocity)
+            /* if (rb.velocity.x >= maximumVelocity || rb.velocity.x <= maximumVelocity|| rb.velocity.z >= maximumVelocity || rb.velocity.z <= maximumVelocity)
              {
-                 rb.AddForce(-(rb.velocity) * 1, ForceMode.Force);
+                 rb.AddForce(cameraObject.forward * -1, ForceMode.Force);
              }*/
             //adds extra gravity pull to player
             rb.AddForce(Vector3.down * fallingVelocity * inAirTimer);
@@ -165,6 +167,7 @@ public class PlayerLocomotion : MonoBehaviour
 
     public void HandleAllMovement()
     {
+        magnitudeUI.text = rb.velocity.magnitude.ToString();
         HandleFallingAndLanding();
         HandleRotation();
         if (isGrounded)

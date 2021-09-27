@@ -5,7 +5,7 @@ using UnityEngine;
 public class GravityPull_ : MonoBehaviour
 {
     [SerializeField] float pullForce, pullRadius;
-    [SerializeField] bool active;
+    [SerializeField] public bool active;
     // Start is called before the first frame update
     void Start()
     {
@@ -32,7 +32,7 @@ public class GravityPull_ : MonoBehaviour
         {
             Rigidbody rb = collider.GetComponent<Rigidbody>();
 
-            if (rb != null)
+            if (rb != null&&collider.tag!="Player")
             {
                 rb.AddExplosionForce(-pullForce, transform.position, pullRadius);
             }

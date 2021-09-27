@@ -31,7 +31,7 @@ public class InputManager : MonoBehaviour
             Cursor.visible = false;
         }
        
-
+     
         HandleMovementInput();
         HandleJumpInput();
         //Handle Camera

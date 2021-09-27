@@ -1028,7 +1028,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   horizontalInput: 0
   verticalInput: 0
-  jumpInput: 0
+  jumpDown: 0
+  jumpUp: 0
   moveAmount: 0
   cameraInputX: 0
   cameraInputY: 0
@@ -1045,9 +1046,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 015aede94a9b4164ab5b88f39b7286de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inAirTimer: 0
-  rayCastHeightOffset: 0
-  rayCastRadius: 0.4
+  magnitudeUI: {fileID: 0}
   isRunning: 0
   isSprinting: 0
   isGrounded: 0
@@ -1056,15 +1055,18 @@ MonoBehaviour:
   walkingSpeed: 5
   runningSpeed: 10
   sprintingSpeed: 18
-  inAirSpeed: 20
-  leapingVelocity: 3
+  inAirControl: 0
+  jumpHeight: 1200
+  jumpChargeRate: 10
+  minJumpHeight: 0
+  maxJumpHeight: 0
   fallingVelocity: 40
+  maximumVelocity: 0
+  rayCastRadius: 0.4
   groundLayer:
     serializedVersion: 2
     m_Bits: 72
-  rayCastOrigin: {x: 0, y: 6.14, z: -20.14}
   raySphere: {fileID: 1126213409}
-  jumpHeight: 1200
 --- !u!114 &1878728073
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1077,7 +1079,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b4e0cbcc07acc14e8b0d7530679988d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  forcePushPower: 100
+  grabPoint: {fileID: 0}
+  maxForce: 0
+  forwardOffset: 0
+  jet: {fileID: 8513270216297816554, guid: 485868e3b2bee1c4ab7569dc160d5386, type: 3}
+  feetPos: {fileID: 0}
 --- !u!114 &5553469036145158047
 MonoBehaviour:
   m_ObjectHideFlags: 0

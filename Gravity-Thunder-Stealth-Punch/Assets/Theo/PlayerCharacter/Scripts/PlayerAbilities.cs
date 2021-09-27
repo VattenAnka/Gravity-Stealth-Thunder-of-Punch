@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerAbilities : MonoBehaviour
@@ -9,6 +7,10 @@ public class PlayerAbilities : MonoBehaviour
     RaycastHit hit;
     public float maxForce;
     float force;
+    public float forwardOffset;
+    public GameObject jet;
+    public Transform feetPos;
+    bool grab;
     // Start is called before the first frame update
     void Start()
     {
@@ -20,9 +22,14 @@ public class PlayerAbilities : MonoBehaviour
     {
         Debug.DrawLine(camera.transform.position, hit.point);
 
+        //stupid experemint lol
+        //Fly();
+        ForceGrab();
     }
 
-   
+    private void FixedUpdate()
+    {
+    }
     public void ForcePush()
     {
 
@@ -34,15 +41,50 @@ public class PlayerAbilities : MonoBehaviour
             if (hit.collider.gameObject.GetComponent<Rigidbody>() != null)
             {
                 force = 0;
-                if (maxForce - Vector3.Distance(hit.point, camera.transform.position)>0) force = maxForce- Vector3.Distance(hit.point, camera.transform.position);
+                if (maxForce - Vector3.Distance(hit.point, camera.transform.position) > 0) force = maxForce - Vector3.Distance(hit.point, camera.transform.position);
                 hit.collider.gameObject.GetComponent<Rigidbody>().AddForce((hit.point - camera.transform.position) * force, ForceMode.Impulse);
             }
 
         }
     }
+
+    public void ForceGrab()
+    {
+           if(Input.GetKeyDown(KeyCode.X)) grabPoint.GetComponent<GravityPull_>().active = !grabPoint.GetComponent<GravityPull_>().active;
+        if (Input.GetMouseButtonDown(1))
+        {
+            //grab = !grab;
+            if (Physics.Raycast(camera.transform.position, camera.transform.forward, out hit))
+            {
+
+                forwardOffset = Vector3.Distance(camera.transform.position, hit.point);
+            }
+        }
+
+        if (Input.GetKey(KeyCode.E)) forwardOffset += .05f;
+        if (Input.GetKey(KeyCode.Q)) forwardOffset -= .05f;
+        grabPoint.transform.position = camera.transform.position + camera.transform.forward * forwardOffset;
+        
+    }
+
+
+
+
+
+
+
+    public void Fly()
+    {
+        if (Input.GetMouseButton(1))
+        {
+            GameObject newJet = Instantiate(jet, feetPos.position, transform.rotation);
+            Destroy(newJet, 0.2f);
+            Debug.Log("SPAWN");
+        }
+    }
 }
 
-                
+
 
 
 
