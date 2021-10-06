@@ -11,6 +11,7 @@ public class PlayerAbilities : MonoBehaviour
     public GameObject jet;
     public Transform feetPos;
     bool grab;
+    [SerializeField] KeyCode forceGrab, grabTowards, grabAway;
     // Start is called before the first frame update
     void Start()
     {
@@ -50,7 +51,7 @@ public class PlayerAbilities : MonoBehaviour
 
     public void ForceGrab()
     {
-           if(Input.GetKeyDown(KeyCode.X)) grabPoint.GetComponent<GravityPull_>().active = !grabPoint.GetComponent<GravityPull_>().active;
+           if(Input.GetKeyDown(forceGrab)) grabPoint.GetComponent<GravityPull_>().active = !grabPoint.GetComponent<GravityPull_>().active;
         if (Input.GetMouseButtonDown(1))
         {
             //grab = !grab;
@@ -61,8 +62,8 @@ public class PlayerAbilities : MonoBehaviour
             }
         }
 
-        if (Input.GetKey(KeyCode.E)) forwardOffset += .05f;
-        if (Input.GetKey(KeyCode.Q)) forwardOffset -= .05f;
+        if (Input.GetKey(grabAway)) forwardOffset += .05f;
+        if (Input.GetKey(grabTowards)) forwardOffset -= .05f;
         grabPoint.transform.position = camera.transform.position + camera.transform.forward * forwardOffset;
         
     }

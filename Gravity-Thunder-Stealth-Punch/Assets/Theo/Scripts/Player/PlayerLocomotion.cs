@@ -113,6 +113,7 @@ public class PlayerLocomotion : MonoBehaviour
                  rb.AddForce(cameraObject.forward * -1, ForceMode.Force);
              }*/
             //adds extra gravity pull to player
+            
             rb.AddForce(Vector3.down * fallingVelocity * inAirTimer);
         }
 
