@@ -55,7 +55,7 @@ public class InputManager : MonoBehaviour
         animatorManager.UpdateAnimatorValues(moveAmount);
 
 
-        //moveAmount = Mathf.Clamp01(Mathf.Abs(horizontalInput) + Mathf.Abs(verticalInput));
+      
 
         //toggle running, walking and sprinting
         if (Input.GetKeyDown(KeyCode.LeftControl)) playerLocomotion.isRunning = !playerLocomotion.isRunning;

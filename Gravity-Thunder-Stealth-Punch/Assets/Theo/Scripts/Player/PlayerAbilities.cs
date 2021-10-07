@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class PlayerAbilities : MonoBehaviour
 {
+    [SerializeField]private float grabPushForce;
     public Transform grabPoint;
     Camera camera;
     RaycastHit hit;
@@ -12,9 +13,12 @@ public class PlayerAbilities : MonoBehaviour
     public Transform feetPos;
     bool grab;
     [SerializeField] KeyCode forceGrab, grabTowards, grabAway;
+
+    GravityPull_ gravitySphere;
     // Start is called before the first frame update
     void Start()
     {
+        gravitySphere = grabPoint.GetComponent<GravityPull_>();
         camera = Camera.main;
     }
 
@@ -51,7 +55,14 @@ public class PlayerAbilities : MonoBehaviour
 
     public void ForceGrab()
     {
-           if(Input.GetKeyDown(forceGrab)) grabPoint.GetComponent<GravityPull_>().active = !grabPoint.GetComponent<GravityPull_>().active;
+           if(Input.GetKeyDown(forceGrab)) gravitySphere.active = !gravitySphere.active;
+
+        if (gravitySphere.active && Input.GetMouseButtonDown(0))
+        {
+            gravitySphere.active = false;
+            gravitySphere.Push(grabPushForce);
+            
+        }
         if (Input.GetMouseButtonDown(1))
         {
             //grab = !grab;

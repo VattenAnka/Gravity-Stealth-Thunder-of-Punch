@@ -6,12 +6,12 @@ public class GravityPull_ : MonoBehaviour
 {
     [SerializeField] float pullForce, pullRadius;
     [SerializeField] public bool active;
-
+    PlayerAbilities playerAbilities;
     Collider[] colliders;
     // Start is called before the first frame update
     void Start()
     {
-
+        playerAbilities = FindObjectOfType<PlayerAbilities>();
     }
 
     // Update is called once per frame
@@ -43,6 +43,20 @@ public class GravityPull_ : MonoBehaviour
             if (rb != null && collider.tag != "Player")
             {
                 rb.AddExplosionForce(-pullForce, transform.position, pullRadius);
+            }
+        }
+    }
+
+
+    public void Push(float force)
+    {
+        foreach (Collider collider in colliders)
+        {
+            Rigidbody rb = collider.GetComponent<Rigidbody>();
+
+            if (rb != null && collider.tag != "Player")
+            {
+                rb.AddForce(Camera.main.transform.forward * force,ForceMode.VelocityChange);
             }
         }
     }
