@@ -9,14 +9,16 @@ public class InputManager : MonoBehaviour
     AnimatorManager animatorManager;
     PlayerAbilities playerAbilities;
     [HideInInspector] public float horizontalInput, verticalInput;
-    [HideInInspector] public bool jumpDown, jumpUp;
+    [HideInInspector] public bool jumpDown, jumpUp, mouseLeftDown, mouseRightDown, leftCtrlDown, leftShift, isMoving;
+    Rigidbody rb;
 
     public float moveAmount;
     public float cameraInputX, cameraInputY;
     public Vector3 mousePos;
-    bool isMoving;
+    
     private void Awake()
     {
+        rb = GetComponent<Rigidbody>();
         playerAbilities = GetComponent<PlayerAbilities>();
         animatorManager = GetComponent<AnimatorManager>();
         playerLocomotion = GetComponent<PlayerLocomotion>();
@@ -24,13 +26,10 @@ public class InputManager : MonoBehaviour
     public void HandleAllInputs()
     {
         //hide cursor when clicking on screen
-        if (Input.GetMouseButtonDown(0))
-        {
-            animatorManager.PlayTargetAnimation("Punch", false);
-            playerAbilities.ForcePush();
-            Cursor.visible = false;
-        }
-       
+        
+        mouseLeftDown = Input.GetMouseButtonDown(0);
+        mouseRightDown = Input.GetMouseButtonDown(1);
+        if (mouseLeftDown) Cursor.visible = false;
      
         HandleMovementInput();
         HandleJumpInput();
@@ -46,26 +45,26 @@ public class InputManager : MonoBehaviour
     }
     private void HandleMovementInput()
     {
+        
+       
+
+        leftCtrlDown = Input.GetKeyDown(KeyCode.LeftControl);
+        leftShift = Input.GetKey(KeyCode.LeftShift);
+
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
         isMoving = !(horizontalInput == 0 && verticalInput == 0);
 
         cameraInputX = Input.GetAxis("Mouse X");
         cameraInputY = Input.GetAxis("Mouse Y");
-        animatorManager.UpdateAnimatorValues(moveAmount);
-
-
-      
-
-        //toggle running, walking and sprinting
-        if (Input.GetKeyDown(KeyCode.LeftControl)) playerLocomotion.isRunning = !playerLocomotion.isRunning;
-        playerLocomotion.isSprinting = Input.GetKey(KeyCode.LeftShift);
-
-        if (!playerLocomotion.isSprinting && playerLocomotion.isRunning && isMoving) moveAmount = .6f;
-        else if (playerLocomotion.isSprinting && isMoving) moveAmount = 1f;
-        else if (!playerLocomotion.isRunning && isMoving) moveAmount = 0.35f;
-        else moveAmount = 0;
+       
+    
     }
 
 
 }
+
+
+      
+
+

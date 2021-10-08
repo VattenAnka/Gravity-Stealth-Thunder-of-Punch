@@ -8,6 +8,7 @@ public class PlayerManager : MonoBehaviour
     CameraManager cameraManager;
     InputManager inputManager;
     PlayerLocomotion playerLocomotion;
+    PlayerAbilities playerAbilities;
     
     public bool isInteracting;
     // Start is called before the first frame update
@@ -15,6 +16,7 @@ public class PlayerManager : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.Confined;
         Cursor.visible = false;
+        playerAbilities = GetComponent<PlayerAbilities>();
         animatorManager = GetComponent<AnimatorManager>();
         cameraManager = FindObjectOfType<CameraManager>();
         inputManager = GetComponent<InputManager>();
@@ -25,7 +27,9 @@ public class PlayerManager : MonoBehaviour
     void Update()
     {
         inputManager.HandleAllInputs();
+        playerLocomotion.ToggleMovementModes();
         playerLocomotion.HandleJumping();
+        playerAbilities.HandleAllAbilities();
     }
 
     private void FixedUpdate()
@@ -37,8 +41,8 @@ public class PlayerManager : MonoBehaviour
     private void LateUpdate()
     {
         cameraManager.HandleAllCameraMovement();
-        isInteracting = animatorManager.animator.GetBool("IsInteracting");
-        playerLocomotion.isJumping = animatorManager.animator.GetBool("IsJumping");
-        animatorManager.animator.SetBool("IsGrounded",playerLocomotion.isGrounded);
+        animatorManager.animator.SetBool("IsGrounded", playerLocomotion.isGrounded);
     }
 }
+
+

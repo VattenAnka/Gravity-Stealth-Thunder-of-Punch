@@ -15,25 +15,19 @@ public class PlayerAbilities : MonoBehaviour
     [SerializeField] KeyCode forceGrab, grabTowards, grabAway;
 
     GravityPull_ gravitySphere;
-    // Start is called before the first frame update
-    void Start()
+    InputManager inputManager;
+    private void Awake()
     {
+        inputManager = GetComponent<InputManager>();
         gravitySphere = grabPoint.GetComponent<GravityPull_>();
         camera = Camera.main;
     }
-
-    // Update is called once per frame
-    void Update()
+   
+    public void HandleAllAbilities()
     {
         Debug.DrawLine(camera.transform.position, hit.point);
-
-        //stupid experemint lol
-        //Fly();
+        if (inputManager.mouseLeftDown) ForcePush();
         ForceGrab();
-    }
-
-    private void FixedUpdate()
-    {
     }
     public void ForcePush()
     {
@@ -55,15 +49,15 @@ public class PlayerAbilities : MonoBehaviour
 
     public void ForceGrab()
     {
-           if(Input.GetKeyDown(forceGrab)) gravitySphere.active = !gravitySphere.active;
+        if(Input.GetKeyDown(forceGrab)) gravitySphere.active = !gravitySphere.active;
 
-        if (gravitySphere.active && Input.GetMouseButtonDown(0))
+        if (gravitySphere.active && inputManager.mouseLeftDown)
         {
             gravitySphere.active = false;
             gravitySphere.Push(grabPushForce);
             
         }
-        if (Input.GetMouseButtonDown(1))
+        if (inputManager.mouseRightDown)
         {
             //grab = !grab;
             if (Physics.Raycast(camera.transform.position, camera.transform.forward, out hit))

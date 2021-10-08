@@ -4,30 +4,37 @@ using UnityEngine;
 
 public class AnimatorManager : MonoBehaviour
 {
+    Rigidbody rb;
     public Animator animator;
-    int horizontal, vertical;
+   
    
     private void Awake()
     {
-       
+        rb = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
-        horizontal = Animator.StringToHash("Horizontal");
-        vertical = Animator.StringToHash("Vertical");
+      
     }
 
-    public void PlayTargetAnimation(string targetAnimation, bool isInteracting) 
+    public void PlayTargetAnimation(string targetAnimation) 
     {
-        animator.SetBool("IsInteracting", isInteracting);
         animator.CrossFade(targetAnimation, 0.2f);
     }
 
-    public void UpdateAnimatorValues(float moveAmount)
+    public void UpdateJumpBlendValue(float yVel)
     {
-        animator.SetFloat(horizontal, moveAmount, .15f, Time.deltaTime);
-        animator.SetFloat(vertical, moveAmount, .15f, Time.deltaTime);
+        animator.SetFloat("yVelocity", yVel);
     }
+
        
+    public void UpdateWalkBlendValue(float moveAmount)
+    {
+       
+        animator.SetFloat("SpeedPercentage", moveAmount, 0.2f,Time.deltaTime);
+    }
 }
+
+        
+       
 
        
 

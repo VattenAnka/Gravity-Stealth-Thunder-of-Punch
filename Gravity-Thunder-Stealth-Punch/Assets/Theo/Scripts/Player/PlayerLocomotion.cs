@@ -4,29 +4,34 @@ using UnityEngine;
 using UnityEngine.UI;
 public class PlayerLocomotion : MonoBehaviour
 {
-    public Text magnitudeUI;
 
     Vector3 moveDirection;
     Transform cameraObject;
 
 
 
+    [SerializeField] MoveMode currentMoveMode;
+    [SerializeField] Vector3 gravity;
     [SerializeField] Transform direction;
 
     [HideInInspector] public bool isRunning, isSprinting, isGrounded, isJumping;
 
     [Header("Ground Movement Settings")]
     [SerializeField] float rotationSpeed;
-    [SerializeField] float walkingSpeed;
+    [SerializeField] float walkSpeed;
     [SerializeField] float runningSpeed;
     [SerializeField] float sprintingSpeed;
+
     [Header("Jump and Fall Settings")]
-    [Range(0, 1)] [SerializeField] float inAirControl;
-    [SerializeField] float jumpHeight = 3, jumpChargeRate = 10, minJumpHeight, maxJumpHeight, fallingVelocity, maximumVelocity, rayCastRadius = 1f;
+    [SerializeField] float inAirSpeed;
+    [Range(0, 20)] [SerializeReference] float groundDrag;
+    [Range(0, 20)] [SerializeReference] float airDrag;
+    [Range(0, 20)] [SerializeReference] float fallDrag;
+
+    [SerializeField] float jumpHeight = 3, jumpChargeRate = 10, minJumpHeight, maxJumpHeight, maximumVelocity, rayCastRadius = 1f;
     float inAirTimer;
     [SerializeField] LayerMask groundLayer;
     [SerializeField] Transform raySphere;
-
 
     Rigidbody rb;
     InputManager inputManager;
@@ -43,45 +48,78 @@ public class PlayerLocomotion : MonoBehaviour
         cameraObject = Camera.main.transform;
     }
 
+    public enum MoveMode
+    {
+        walking, running, sprinting, inAirMovement
+    }
+
+    public void ToggleMovementModes()
+    {
+        //Toggle ctrl to run
+        if (inputManager.leftCtrlDown) isRunning = !isRunning;
+
+        //Hold shift to sprint
+        if (inputManager.leftShift) isSprinting = true;
+        else isSprinting = false;
+
+        if (isGrounded)
+        {
+            if (isRunning && !isSprinting) currentMoveMode = MoveMode.running;
+            else if (isSprinting) currentMoveMode = MoveMode.sprinting;
+            else if (!isRunning) currentMoveMode = MoveMode.walking;
+        }
+        else currentMoveMode = MoveMode.inAirMovement;
+    }
+
+
+
+
+    private float MovementModes()
+    {
+        float moveSpeed = 0;
+        
+        switch (currentMoveMode)
+        {
+            case MoveMode.walking:
+                moveSpeed = walkSpeed;
+                break;
+            case MoveMode.running:
+                moveSpeed = runningSpeed;
+                break;
+            case MoveMode.sprinting:
+                moveSpeed = sprintingSpeed;
+                break;
+            case MoveMode.inAirMovement:
+                moveSpeed = inAirSpeed;
+                break;
+        }
+        if(inputManager.isMoving)animatorManager.UpdateWalkBlendValue(moveSpeed/sprintingSpeed);
+        else animatorManager.UpdateWalkBlendValue(0);
+        return moveSpeed;
+    }
+                
+        
+
+
+
 
     private void HandleMovement()
     {
+
+        moveDirection = direction.forward * inputManager.verticalInput;
+        moveDirection += direction.right * inputManager.horizontalInput;
+        moveDirection.Normalize();
+        moveDirection.y = 0;
+
+        moveDirection *= MovementModes();
        
-
-        moveDirection = direction.forward * inputManager.verticalInput;
-        moveDirection += direction.right * inputManager.horizontalInput;
-        moveDirection.Normalize();
-        moveDirection.y = 0;
-        
-
-      
-
-        //Switch between movement speeds
-        if (inputManager.moveAmount >= 0.5f && inputManager.moveAmount < 0.8f) moveDirection *= runningSpeed;
-        else if (inputManager.moveAmount >= 0.8f) moveDirection *= sprintingSpeed;
-        else moveDirection *= walkingSpeed;
-
-
         Vector3 movementVelocity = moveDirection;
-        rb.velocity = movementVelocity;
-        rb.velocity = movementVelocity;
-    }
-
-    private void InAirMovement()
-    {
-        moveDirection = direction.forward * inputManager.verticalInput;
-        moveDirection += direction.right * inputManager.horizontalInput;
-        moveDirection.Normalize();
-        moveDirection *= inAirControl;
-        moveDirection.y = 0;
-        rb.AddForce(moveDirection, ForceMode.VelocityChange);
-
+        // rb.velocity = movementVelocity;
+        rb.AddForce(movementVelocity, ForceMode.VelocityChange);
     }
 
     private void HandleRotation()
     {
-        
-        
         Vector3 targetDirection = Vector3.zero;
         targetDirection = cameraObject.forward * Input.GetAxis("Vertical");
         targetDirection += cameraObject.right * Input.GetAxis("Horizontal");
@@ -98,45 +136,27 @@ public class PlayerLocomotion : MonoBehaviour
 
         transform.rotation = playerRotation;
     }
-    private void HandleFallingAndLanding()
+    private void HandleFallingAndGroundCheck()
     {
-        //Gives extra gravity to player if isnt on ground
-        if (!isGrounded)
-        {
-            if (!playerManager.isInteracting)
-            {
-                animatorManager.PlayTargetAnimation("Falling", true);
-            }
-            inAirTimer += Time.deltaTime;
-           
+        //Gives gravity to player if isnt on ground
 
-            rb.AddForce(Vector3.down * fallingVelocity * inAirTimer);
-        }
-
+        inAirTimer += Time.deltaTime;
+        rb.AddForce(gravity , ForceMode.Acceleration);
+        animatorManager.UpdateJumpBlendValue(rb.velocity.y);
         //Ground check 
         if (Physics.CheckSphere(raySphere.position, rayCastRadius, groundLayer))
         {
-            if (!isGrounded && !playerManager.isInteracting)
-            {
-                animatorManager.PlayTargetAnimation("Land", true);
-
-            }
+            rb.drag = groundDrag;
             inAirTimer = 0;
-
             isGrounded = true;
         }
         else
         {
+            rb.drag = airDrag;
+           
             isGrounded = false;
         }
     }
-
-
-
-
-
-
-
 
     public void HandleJumping()
     {
@@ -149,34 +169,19 @@ public class PlayerLocomotion : MonoBehaviour
             }
             if (inputManager.jumpUp)
             {
-                animatorManager.animator.SetBool("IsJumping", true);
-                animatorManager.PlayTargetAnimation("Jump", false);
-                rb.AddForce(transform.up * jumpHeight);
+                rb.AddForce(transform.up * jumpHeight,ForceMode.Impulse);
                 jumpHeight = minJumpHeight;
             }
         }
     }
-
-
-
-    
-
     public void HandleAllMovement()
     {
-       
+
         direction.transform.forward = new Vector3(cameraObject.transform.forward.x, 0, cameraObject.transform.forward.z);
 
-        magnitudeUI.text = rb.velocity.magnitude.ToString();
-        HandleFallingAndLanding();
+        HandleFallingAndGroundCheck();
         HandleRotation();
-        if (isGrounded)
-        {
-
-            HandleMovement();
-        }
-        else InAirMovement();
-
-
+        HandleMovement();
     }
 
     private void OnDrawGizmos()
@@ -184,6 +189,9 @@ public class PlayerLocomotion : MonoBehaviour
 
         Gizmos.DrawSphere(raySphere.position, rayCastRadius);
     }
-}
 
+
+
+
+}
 
