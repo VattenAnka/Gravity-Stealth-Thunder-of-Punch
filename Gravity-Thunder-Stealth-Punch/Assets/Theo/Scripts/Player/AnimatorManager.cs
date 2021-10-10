@@ -15,6 +15,11 @@ public class AnimatorManager : MonoBehaviour
       
     }
 
+    public void SetSneakAnimation(bool sneak)
+    {
+        animator.SetBool("Sneak", sneak);
+    }
+
     public void PlayTargetAnimation(string targetAnimation) 
     {
         animator.CrossFade(targetAnimation, 0.2f);
@@ -30,6 +35,11 @@ public class AnimatorManager : MonoBehaviour
     {
        
         animator.SetFloat("SpeedPercentage", moveAmount, 0.2f,Time.deltaTime);
+    }
+    public void UpdateSneakBlendValue(float moveAmount)
+    {
+       
+        animator.SetFloat("SneakSpeed", moveAmount, 0.2f, Time.deltaTime);
     }
 }
 

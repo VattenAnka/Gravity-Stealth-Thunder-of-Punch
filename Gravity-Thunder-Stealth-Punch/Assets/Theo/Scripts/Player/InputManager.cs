@@ -9,7 +9,7 @@ public class InputManager : MonoBehaviour
     AnimatorManager animatorManager;
     PlayerAbilities playerAbilities;
     [HideInInspector] public float horizontalInput, verticalInput;
-    [HideInInspector] public bool jumpDown, jumpUp, mouseLeftDown, mouseRightDown, leftCtrlDown, leftShift, isMoving;
+    [HideInInspector] public bool jumpDown, jumpUp, mouseLeftDown, mouseRightDown, leftCtrlDown, leftShift,sneakInput , moveInput;
     Rigidbody rb;
 
     public float moveAmount;
@@ -50,10 +50,11 @@ public class InputManager : MonoBehaviour
 
         leftCtrlDown = Input.GetKeyDown(KeyCode.LeftControl);
         leftShift = Input.GetKey(KeyCode.LeftShift);
+        sneakInput = Input.GetKeyDown(KeyCode.C);
 
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
-        isMoving = !(horizontalInput == 0 && verticalInput == 0);
+        moveInput = !(horizontalInput == 0 && verticalInput == 0);
 
         cameraInputX = Input.GetAxis("Mouse X");
         cameraInputY = Input.GetAxis("Mouse Y");

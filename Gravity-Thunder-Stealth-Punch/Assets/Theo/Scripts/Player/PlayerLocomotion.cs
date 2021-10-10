@@ -14,7 +14,7 @@ public class PlayerLocomotion : MonoBehaviour
     [SerializeField] Vector3 gravity;
     [SerializeField] Transform direction;
 
-    [HideInInspector] public bool isRunning, isSprinting, isGrounded, isJumping;
+    [HideInInspector] public bool isRunning, isSprinting, isGrounded, isJumping, isSneaking;
 
     [Header("Ground Movement Settings")]
     [SerializeField] float rotationSpeed;
@@ -32,13 +32,13 @@ public class PlayerLocomotion : MonoBehaviour
     float inAirTimer;
     [SerializeField] LayerMask groundLayer;
     [SerializeField] Transform raySphere;
-
     Rigidbody rb;
     InputManager inputManager;
     PlayerManager playerManager;
     AnimatorManager animatorManager;
-
-
+    CapsuleCollider collider;
+    Vector3 startScale;
+    [SerializeField] Vector3 sneakScale;
     private void Awake()
     {
         animatorManager = GetComponent<AnimatorManager>();
@@ -46,17 +46,25 @@ public class PlayerLocomotion : MonoBehaviour
         inputManager = GetComponent<InputManager>();
         rb = GetComponent<Rigidbody>();
         cameraObject = Camera.main.transform;
+        collider = GetComponent<CapsuleCollider>();
+
+    }
+
+    private void Start()
+    {
+        startScale = transform.localScale;
     }
 
     public enum MoveMode
     {
-        walking, running, sprinting, inAirMovement
+        walking, running, sprinting, sneaking, inAirMovement
     }
 
     public void ToggleMovementModes()
     {
         //Toggle ctrl to run
         if (inputManager.leftCtrlDown) isRunning = !isRunning;
+        if (inputManager.sneakInput) isSneaking = !isSneaking;
 
         //Hold shift to sprint
         if (inputManager.leftShift) isSprinting = true;
@@ -64,12 +72,26 @@ public class PlayerLocomotion : MonoBehaviour
 
         if (isGrounded)
         {
-            if (isRunning && !isSprinting) currentMoveMode = MoveMode.running;
-            else if (isSprinting) currentMoveMode = MoveMode.sprinting;
-            else if (!isRunning) currentMoveMode = MoveMode.walking;
+            if (isRunning && !isSprinting && !isSneaking) currentMoveMode = MoveMode.running;
+            else if (isSprinting && !isSneaking) currentMoveMode = MoveMode.sprinting;
+            else if (!isRunning && !isSneaking) currentMoveMode = MoveMode.walking;
+            else if (isSneaking) currentMoveMode = MoveMode.sneaking;
         }
         else currentMoveMode = MoveMode.inAirMovement;
+
+
+        if (currentMoveMode == MoveMode.sneaking)
+        {
+            transform.localScale = sneakScale;
+        }
+        else
+        {
+            transform.localScale = startScale;
+        }
     }
+
+
+
 
 
 
@@ -77,28 +99,53 @@ public class PlayerLocomotion : MonoBehaviour
     private float MovementModes()
     {
         float moveSpeed = 0;
-        
+        animatorManager.SetSneakAnimation(isSneaking);
         switch (currentMoveMode)
         {
             case MoveMode.walking:
                 moveSpeed = walkSpeed;
+
+
+
                 break;
             case MoveMode.running:
                 moveSpeed = runningSpeed;
+
+
+
                 break;
             case MoveMode.sprinting:
                 moveSpeed = sprintingSpeed;
+
+
+
                 break;
             case MoveMode.inAirMovement:
                 moveSpeed = inAirSpeed;
+                isSneaking = false;
+
+                break;
+            case MoveMode.sneaking:
+                moveSpeed = walkSpeed;
+
                 break;
         }
-        if(inputManager.isMoving)animatorManager.UpdateWalkBlendValue(moveSpeed/sprintingSpeed);
-        else animatorManager.UpdateWalkBlendValue(0);
+        if (inputManager.moveInput)
+        {
+            animatorManager.UpdateWalkBlendValue(moveSpeed / sprintingSpeed);
+            animatorManager.UpdateSneakBlendValue(1);
+        }
+        else
+        {
+            animatorManager.UpdateWalkBlendValue(0);
+            animatorManager.UpdateSneakBlendValue(0);
+        }
+
+
         return moveSpeed;
     }
-                
-        
+
+
 
 
 
@@ -112,7 +159,7 @@ public class PlayerLocomotion : MonoBehaviour
         moveDirection.y = 0;
 
         moveDirection *= MovementModes();
-       
+
         Vector3 movementVelocity = moveDirection;
         // rb.velocity = movementVelocity;
         rb.AddForce(movementVelocity, ForceMode.VelocityChange);
@@ -141,7 +188,7 @@ public class PlayerLocomotion : MonoBehaviour
         //Gives gravity to player if isnt on ground
 
         inAirTimer += Time.deltaTime;
-        rb.AddForce(gravity , ForceMode.Acceleration);
+        rb.AddForce(gravity, ForceMode.Acceleration);
         animatorManager.UpdateJumpBlendValue(rb.velocity.y);
         //Ground check 
         if (Physics.CheckSphere(raySphere.position, rayCastRadius, groundLayer))
@@ -153,14 +200,14 @@ public class PlayerLocomotion : MonoBehaviour
         else
         {
             rb.drag = airDrag;
-           
+
             isGrounded = false;
         }
     }
 
     public void HandleJumping()
     {
-        if (isGrounded)
+        if (isGrounded && !isSneaking)
         {
             if (inputManager.jumpDown && jumpHeight <= maxJumpHeight)
             {
@@ -169,7 +216,7 @@ public class PlayerLocomotion : MonoBehaviour
             }
             if (inputManager.jumpUp)
             {
-                rb.AddForce(transform.up * jumpHeight,ForceMode.Impulse);
+                rb.AddForce(transform.up * jumpHeight, ForceMode.Impulse);
                 jumpHeight = minJumpHeight;
             }
         }

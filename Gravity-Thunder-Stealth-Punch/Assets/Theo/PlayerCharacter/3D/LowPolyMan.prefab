@@ -1144,6 +1144,12 @@ MonoBehaviour:
   verticalInput: 0
   jumpDown: 0
   jumpUp: 0
+  mouseLeftDown: 0
+  mouseRightDown: 0
+  leftCtrlDown: 0
+  leftShift: 0
+  sneakInput: 0
+  moveInput: 0
   moveAmount: 0
   cameraInputX: 0
   cameraInputY: 0
@@ -1160,28 +1166,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 015aede94a9b4164ab5b88f39b7286de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  magnitudeUI: {fileID: 0}
+  currentMoveMode: 0
+  gravity: {x: 0, y: 0, z: 0}
   direction: {fileID: 0}
   isRunning: 0
   isSprinting: 0
   isGrounded: 0
   isJumping: 0
+  isSneaking: 0
   rotationSpeed: 15
-  walkingSpeed: 5
+  walkSpeed: 0
   runningSpeed: 10
   sprintingSpeed: 18
-  inAirControl: 0.35
+  inAirSpeed: 0
+  groundDrag: 0
+  airDrag: 0
+  fallDrag: 0
   jumpHeight: 1200
   jumpChargeRate: 1000.24
   minJumpHeight: 600
   maxJumpHeight: 2000
-  fallingVelocity: 30
   maximumVelocity: 60
   rayCastRadius: 0.4
   groundLayer:
     serializedVersion: 2
     m_Bits: 72
   raySphere: {fileID: 1126213409}
+  colliderSneakHeight: 7.78
 --- !u!114 &1878728073
 MonoBehaviour:
   m_ObjectHideFlags: 0

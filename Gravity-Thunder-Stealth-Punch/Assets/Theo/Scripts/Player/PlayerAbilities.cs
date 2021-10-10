@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class PlayerAbilities : MonoBehaviour
 {
-    [SerializeField]private float grabPushForce;
+    [SerializeField] private float grabPushForce;
     public Transform grabPoint;
     Camera camera;
     RaycastHit hit;
@@ -13,7 +13,8 @@ public class PlayerAbilities : MonoBehaviour
     public Transform feetPos;
     bool grab;
     [SerializeField] KeyCode forceGrab, grabTowards, grabAway;
-
+    Collider lastHitCollider;
+    Collider currentHitCollider;
     GravityPull_ gravitySphere;
     InputManager inputManager;
     private void Awake()
@@ -22,12 +23,13 @@ public class PlayerAbilities : MonoBehaviour
         gravitySphere = grabPoint.GetComponent<GravityPull_>();
         camera = Camera.main;
     }
-   
+
     public void HandleAllAbilities()
     {
         Debug.DrawLine(camera.transform.position, hit.point);
         if (inputManager.mouseLeftDown) ForcePush();
         ForceGrab();
+        HighlightObjects();
     }
     public void ForcePush()
     {
@@ -49,13 +51,13 @@ public class PlayerAbilities : MonoBehaviour
 
     public void ForceGrab()
     {
-        if(Input.GetKeyDown(forceGrab)) gravitySphere.active = !gravitySphere.active;
+        if (Input.GetKeyDown(forceGrab)) gravitySphere.active = !gravitySphere.active;
 
         if (gravitySphere.active && inputManager.mouseLeftDown)
         {
             gravitySphere.active = false;
             gravitySphere.Push(grabPushForce);
-            
+
         }
         if (inputManager.mouseRightDown)
         {
@@ -70,11 +72,30 @@ public class PlayerAbilities : MonoBehaviour
         if (Input.GetKey(grabAway)) forwardOffset += .05f;
         if (Input.GetKey(grabTowards)) forwardOffset -= .05f;
         grabPoint.transform.position = camera.transform.position + camera.transform.forward * forwardOffset;
-        
+
     }
 
 
+    public void HighlightObjects()
+    {
+        if (Physics.Raycast(camera.transform.position, camera.transform.forward, out hit))
+        {
+           
+            currentHitCollider = hit.collider;
+           
+            if (currentHitCollider.GetComponent<Outline>() != null && currentHitCollider.gameObject != lastHitCollider.gameObject)
+            {
+                lastHitCollider = hit.collider;
+                lastHitCollider.GetComponent<Outline>().enabled = true;
+            }
+            else 
+            {
+                lastHitCollider = hit.collider;
 
+                lastHitCollider.GetComponent<Outline>().enabled = false;
+            }
+        }
+    }
 
 
 
