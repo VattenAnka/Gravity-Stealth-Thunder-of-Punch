@@ -34,7 +34,7 @@ public class PlayerManager : MonoBehaviour
 
     private void FixedUpdate()
     {
-
+        playerAbilities.HighlightObjects();
         playerLocomotion.HandleAllMovement();
     }
 
